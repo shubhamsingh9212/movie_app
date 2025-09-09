@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  static const white = Color(0xFFFFFFFF);
+  static const black = Colors.black;
+  static const purple = Color(0xFF5C61F2);
+  static const grey = Color(0xFF9D9D9D);
+  static const dGrey = Color(0xFF718096);
+  static const dBlue = Color(0xFF00AAFF);
+  static const lGrey = Color(0xFF7F7F7F);
+  static const blue = Color(0xFF0089FF);
+  static const green = Color(0xFF1EB564);
+  static const yellowL = Color(0xFFFFD700);
+  static const lightGreen = Color(0xFFECFFEC);
+  static const red = Color(0xFFEF0000);
+  static const dRed = Color(0xFFD00000);
+  static const lightRed = Color(0xFFFFF9F9);
+  static const whiteBg = Color(0xFFFBFAFC);
+  static const divider = Color(0xFFECECEC);
+  static const lBlack = Color(0xFF616161);
+  static const midGrey = Color(0xFF3A3A3A);
+  static const dBlack = Color(0xFF737791);
+  static const lightPurple = Color(0xFFEEEFFF);
+  static const tabBg = Color(0xFFF1F1F1);
+  static const unselectedColor = Color(0xFF7E8CA0);
+  static const trackColor = Color(0xFFE9E9E9);
+  static const thumbColor = Color(0xFFB0B0B0);
+  static const greyL = Color(0xFFA9A9A9);
+  static const greyBorder = Color(0xFFEAEAEA);
+  static const blackBorder = Color(0xFF8F8F8F);
+  static const disabledWhite = Color(0xFFE2E8F0);
+  static const yellow = Color(0xFFFFAA20);
+  static const lightYellow = Color(0xFFFFFDF2);
+  static const darkYellow = Color(0xFFFFC300);
+  static const greyD = Color(0xFF8B8B8B);
+  static const orange = Color(0xFFFF7700);
+  static const graphLineColor = Color(0xFFDDDDDD);
+  static const lightGrey = Color(0xFFEAEDF2);
+  static const dPurple = Color(0xFF8688B6);
+  static const lPurple = Color(0xFFFBFBFF);
+  static const greyd = Color(0xFF8E8E8E);
+  static const borderPurple = Color(0xFFEDEEFF);
+  static const lightWhite = Color(0xFFEFEFEF);
+  static const unselected = Color(0xFFD7D7D7);
+  static const greyl = Color.fromARGB(255, 249, 241, 241);
+  static const transparent = Colors.transparent;
+}
