@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:movie_app/app/home/home_controller.dart';
 import 'package:movie_app/model/movie_list_model.dart';
 import 'package:movie_app/routes/app_pages.dart';
 import 'package:movie_app/theme/app_colors.dart';
@@ -62,21 +63,23 @@ Widget moviesGridView({
   return SingleChildScrollView(
     controller: scrollController,
     padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-    child: Obx(() {
-      return Column(
-        children: [
-          StaggeredGrid.count(
-            axisDirection: AxisDirection.down,
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            children: List.generate(movieList?.length ?? 0, (index) {
-              return moviePoster(movie: movieList?[index] ?? Result());
-            }),
-          ),
-          Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
-        ],
-      );
-    }),
+    child: GetBuilder<HomeController>(
+      builder: (context) {
+        return Column(
+          children: [
+            StaggeredGrid.count(
+              axisDirection: AxisDirection.down,
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              children: List.generate(movieList?.length ?? 0, (index) {
+                return moviePoster(movie: movieList?[index] ?? Result());
+              }),
+            ),
+            Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
+          ],
+        );
+      },
+    ),
   );
 }

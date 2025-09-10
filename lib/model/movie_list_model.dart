@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:movie_app/model/hive_movie_list_model.dart';
+
 MovieListModel movieListModelFromJson(String str) =>
     MovieListModel.fromJson(json.decode(str));
 
@@ -134,4 +136,44 @@ class Result {
     "vote_average": voteAverage,
     "vote_count": voteCount,
   };
+
+
+
 }
+
+extension MovieListConverter on MovieListModel {
+  MovieListHiveModel toHiveModel() {
+    return MovieListHiveModel(
+      // dates: dates == null
+      //     ? null
+      //     : DatesHiveModel(
+      //         maximum: dates!.maximum,
+      //         minimum: dates!.minimum,
+      //       ),
+      page: page,
+      totalPages: totalPages,
+      // totalResults: totalResults,
+      results: results?.map((e) => ResultHiveModel.fromResult(e)).toList(),
+    );
+  }
+}
+
+extension HiveToOriginal on MovieListHiveModel {
+  MovieListModel toOriginalModel() {
+    return MovieListModel(
+      // dates: dates == null
+      //     ? null
+      //     : Dates(
+      //         maximum: dates!.maximum,
+      //         minimum: dates!.minimum,
+      //       ),
+      page: page,
+      totalPages: totalPages,
+      // totalResults: totalResults,
+      results: results?.map((e) => e.toResult()).toList(),
+    );
+  }
+}
+
+
+

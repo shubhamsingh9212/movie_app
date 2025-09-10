@@ -39,7 +39,7 @@ class MoviesTabBar extends GetView<HomeController> {
               controller: controller.tabController,
               children: [
                 moviesGridView(
-                  movieList: controller.trendingMovieList,
+                  movieList: controller.trendingMovies?.results ?? [],
                   scrollController: controller.trendingScrollController,
                   isLoading: controller.istrendingMoviesLoading,
                 ),
