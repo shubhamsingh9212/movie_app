@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_app/app/bookmark_movies/bookmark_movies_controller.dart';
 import 'package:movie_app/data/strings.dart';
-import 'package:movie_app/theme/app_colors.dart';
 import 'package:movie_app/widgets/custom_app_bar.dart';
 import 'package:movie_app/widgets/custom_sizedbox.dart';
-import 'package:movie_app/widgets/custom_text.dart';
 import 'package:movie_app/widgets/movie_poster.dart';
 
 class BookmarkMoviesView extends GetView<BookmarkMoviesController> {

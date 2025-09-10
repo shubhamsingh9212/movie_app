@@ -1,9 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
 import 'api_client.dart';
 
 class NetworkRequester {
