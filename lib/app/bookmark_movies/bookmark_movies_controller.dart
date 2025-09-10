@@ -6,26 +6,25 @@ import 'package:movie_app/model/movie_list_model.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/network_requester.dart';
 
-class SearchMoviesController extends GetxController {
-  TextEditingController searchController = TextEditingController();
+class BookmarkMoviesController extends GetxController {
   ScrollController scrollController = ScrollController();
-  RxString query = "a".obs;
+
   int currentPage = 1;
   int totalPages = 1;
   RxBool isLoading = false.obs;
-  MovieListModel? searchedMoviesResponse;
-  RxList<Result>? searchedMovieList = <Result>[].obs;
-  Future<void> searchMovies({int page = 1}) async {
+  MovieListModel? bookMarkMoviesResponse;
+  RxList<Result>? bookMarkMovieList = <Result>[].obs;
+  Future<void> getBookMarkedMovies({int page = 1}) async {
     final network = await NetworkRequester.create();
     final response = await network.apiClient.getRequest(
-      Urls.SEARCH_MOVIES,
-      query: {'query': query, 'language': 'en-US', 'page': page},
+      Urls.BOOKMARKED_MOVIE_LIST,
+      query: {'language': 'en-US', 'page': page,'sort_by':"created_at.desc"},
     );
     if (response != null) {
-      searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
-      currentPage = searchedMoviesResponse?.page ?? 1;
-      totalPages = searchedMoviesResponse?.totalPages ?? 1;
-      searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);
+      bookMarkMoviesResponse = movieListModelFromJson(jsonEncode(response));
+      currentPage = bookMarkMoviesResponse?.page ?? 1;
+      totalPages = bookMarkMoviesResponse?.totalPages ?? 1;
+      bookMarkMovieList?.addAll(bookMarkMoviesResponse?.results ?? []);
     }
   }
 
@@ -35,25 +34,17 @@ class SearchMoviesController extends GetxController {
           scrollController.position.maxScrollExtent - 200) {
         if (!isLoading.value && currentPage < totalPages) {
           isLoading.value = true;
-          await searchMovies(page: currentPage + 1);
+          await getBookMarkedMovies(page: currentPage + 1);
           isLoading.value = false;
         }
       }
     });
   }
 
-  void setQuery(String val) {
-    query.value = val;
-  }
-
   @override
   void onInit() {
     super.onInit();
-    searchMovies();
-    debounce(query, (callback) {
-      searchedMovieList?.clear();
-      searchMovies();
-    }, time: Duration(milliseconds: 600));
+    getBookMarkedMovies();
     scrollListerner();
   }
 }

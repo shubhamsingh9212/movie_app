@@ -9,58 +9,75 @@ import 'package:movie_app/service/network_requester.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   late TabController tabController;
-  TextEditingController searchController = TextEditingController();
-  MovieListModel? nowPlayingMoviesResponse;
-  MovieListModel? trendingMoviesResponse;
-  RxList<Result>? nowPlayingMovieList = <Result>[].obs;
-  RxList<Result>? trendingMovieList = <Result>[].obs;
-  RxList<Result>? filteredTrendingMovieList = <Result>[].obs;
-  RxList<Result>? filteredNowPlayingMovieList = <Result>[].obs;
   List<String> tabTitles = [
     Strings.TRENDING_MOVIES,
     Strings.NOW_PLAYING_MOVIES,
   ];
-
-  Future<void> getTrendingMoviesList() async {
+  RxBool istrendingMoviesLoading = false.obs;
+  int trendingCurrentPage = 1;
+  int trendingTotalPages = 1;
+  MovieListModel? trendingMoviesResponse;
+  RxList<Result>? trendingMovieList = <Result>[].obs;
+  Future<void> getTrendingMoviesList({int page = 1}) async {
     final network = await NetworkRequester.create();
     final response = await network.apiClient.getRequest(
       Urls.TRENDING_MOVIES,
-      query: {'language': 'en-US', 'page': 1},
+      query: {'language': 'en-US', 'page': page},
     );
     if (response != null) {
       trendingMoviesResponse = movieListModelFromJson(jsonEncode(response));
-      trendingMovieList?.value = trendingMoviesResponse?.results ?? [];
-      filteredTrendingMovieList?.value = trendingMovieList ?? [];
+      trendingCurrentPage = trendingMoviesResponse?.page ?? 1;
+      trendingTotalPages = trendingMoviesResponse?.totalPages ?? 1;
+      trendingMovieList?.addAll(trendingMoviesResponse?.results ?? []);
     }
   }
 
-  Future<void> getNowPlayingMovies() async {
+  RxBool isNowPlayingMoviesLoading = false.obs;
+  int currentPage = 1;
+  int totalPages = 1;
+  MovieListModel? nowPlayingMoviesResponse;
+  RxList<Result>? nowPlayingMovieList = <Result>[].obs;
+  Future<void> getNowPlayingMovies({int page = 1}) async {
     final network = await NetworkRequester.create();
     final response = await network.apiClient.getRequest(
       Urls.NOW_PLAYING_MOVIES,
-      query: {'language': 'en-US', 'page': 1},
+      query: {'language': 'en-US', 'page': page},
     );
     if (response != null) {
       nowPlayingMoviesResponse = movieListModelFromJson(jsonEncode(response));
-      nowPlayingMovieList?.value = nowPlayingMoviesResponse?.results ?? [];
-      filteredNowPlayingMovieList?.value = nowPlayingMovieList ?? [];
+      currentPage = nowPlayingMoviesResponse?.page ?? 1;
+      totalPages = nowPlayingMoviesResponse?.totalPages ?? 1;
+      nowPlayingMovieList?.addAll(nowPlayingMoviesResponse?.results ?? []);
     }
   }
 
-  void searchMovies() {
-    final lowerCaseMovieName = searchController.text.trim().toLowerCase();
-    filteredTrendingMovieList?.value =
-        trendingMovieList?.where((Result element) {
-          final title = element.title?.toLowerCase();
-          return title?.contains(lowerCaseMovieName) ?? false;
-        }).toList() ??
-        [];
-    filteredNowPlayingMovieList?.value =
-        nowPlayingMovieList?.where((Result element) {
-          final title = element.title?.toLowerCase();
-          return title?.contains(lowerCaseMovieName) ?? false;
-        }).toList() ??
-        [];
+  final ScrollController nowPlayingScrollController = ScrollController();
+  void nowPlayingScrollListerner() {
+    nowPlayingScrollController.addListener(() async {
+      if (nowPlayingScrollController.position.pixels >=
+          nowPlayingScrollController.position.maxScrollExtent - 200) {
+        if (!isNowPlayingMoviesLoading.value && currentPage < totalPages) {
+          isNowPlayingMoviesLoading.value = true;
+          await getNowPlayingMovies(page: currentPage + 1);
+          isNowPlayingMoviesLoading.value = false;
+        }
+      }
+    });
+  }
+
+  final ScrollController trendingScrollController = ScrollController();
+  void trendingScrollListerner() {
+    trendingScrollController.addListener(() async {
+      if (trendingScrollController.position.pixels >=
+          trendingScrollController.position.maxScrollExtent - 200) {
+        if (!istrendingMoviesLoading.value &&
+            trendingCurrentPage < trendingTotalPages) {
+          istrendingMoviesLoading.value = true;
+          await getTrendingMoviesList(page: trendingCurrentPage + 1);
+          istrendingMoviesLoading.value = false;
+        }
+      }
+    });
   }
 
   @override
@@ -69,5 +86,7 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     tabController = TabController(length: 2, vsync: this);
     getTrendingMoviesList();
     getNowPlayingMovies();
+    nowPlayingScrollListerner();
+    trendingScrollListerner();
   }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:movie_app/app/home/home_controller.dart';
-import 'package:movie_app/app/home/widgets.dart';
+import 'package:movie_app/app/search_movies/search_movies_controller.dart';
 import 'package:movie_app/data/strings.dart';
-import 'package:movie_app/theme/app_colors.dart';
-import 'package:movie_app/widgets/custom_sizedbox.dart';
-import 'package:movie_app/widgets/custom_text.dart';
+import 'package:movie_app/widgets/custom_app_bar.dart';
+import 'package:movie_app/widgets/custom_text_field.dart';
+import 'package:movie_app/widgets/movie_poster.dart';
 
-class SearchMoviesView extends GetView<HomeController> {
+class SearchMoviesView extends GetView<SearchMoviesController> {
   const SearchMoviesView({super.key});
 
   @override
@@ -19,67 +18,24 @@ class SearchMoviesView extends GetView<HomeController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: customText(
-                    title: "Watch Me!",
-                    color: AppColors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
+            customAppBar(title: Strings.WATCH_ME),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                height: 45,
+                child: customTextField(
+                  controller: controller.searchController,
+                  onChanged: (val) => controller.setQuery(val),
                 ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: SizedBox(
-                    width: width * 0.5,
-                    height: 45,
-                    child: TextFormField(
-                      expands: true,
-                      maxLines: null,
-                      style: TextStyle(color: AppColors.white, fontSize: 14),
-                      cursorColor: AppColors.red,
-                      controller: controller.searchController,
-                      onChanged: (value) {
-                        controller.searchMovies();
-                      },
-                      decoration: InputDecoration(
-                        hintText: Strings.SEARCH_MOVIE,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 2,
-                          horizontal: 8,
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.red,
-                            width: 0.8,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.red,
-                            width: 0.8,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.red,
-                            width: 0.8,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-            customSizedBox(height: 20),
-            MoviesTabBar(),
+            Expanded(
+              child: moviesGridView(
+                scrollController: controller.scrollController,
+                movieList: controller.searchedMovieList,
+                isLoading: controller.isLoading,
+              ),
+            ),
           ],
         ),
       ),
