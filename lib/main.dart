@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:movie_app/app/home/home_binding.dart';
 import 'package:movie_app/model/hive_movie_list_model.dart';
@@ -14,7 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(MovieListHiveModelAdapter());
-  // await Hive.openBox<MovieListHiveModel>('movies_box');
+  Hive.registerAdapter(ResultHiveModelAdapter());
+  Hive.registerAdapter(
+    DatesHiveModelAdapter(),
+  );
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: AppColors.purple,

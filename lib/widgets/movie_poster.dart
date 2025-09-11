@@ -63,23 +63,19 @@ Widget moviesGridView({
   return SingleChildScrollView(
     controller: scrollController,
     padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-    child: GetBuilder<HomeController>(
-      builder: (context) {
-        return Column(
-          children: [
-            StaggeredGrid.count(
-              axisDirection: AxisDirection.down,
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: List.generate(movieList?.length ?? 0, (index) {
-                return moviePoster(movie: movieList?[index] ?? Result());
-              }),
-            ),
-            Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
-          ],
-        );
-      },
+    child: Column(
+      children: [
+        StaggeredGrid.count(
+          axisDirection: AxisDirection.down,
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          children: List.generate(movieList?.length ?? 0, (index) {
+            return moviePoster(movie: movieList?[index] ?? Result());
+          }),
+        ),
+        Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
+      ],
     ),
   );
 }

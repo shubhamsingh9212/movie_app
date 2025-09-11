@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_app/app/home/home_controller.dart';
+import 'package:movie_app/data/strings.dart';
 import 'package:movie_app/theme/app_colors.dart';
 import 'package:movie_app/widgets/custom_sizedbox.dart';
 import 'package:movie_app/widgets/movie_poster.dart';
@@ -38,15 +39,25 @@ class MoviesTabBar extends GetView<HomeController> {
             child: TabBarView(
               controller: controller.tabController,
               children: [
-                moviesGridView(
-                  movieList: controller.trendingMovies?.results ?? [],
-                  scrollController: controller.trendingScrollController,
-                  isLoading: controller.istrendingMoviesLoading,
+                GetBuilder<HomeController>(
+                  id: Strings.TRENDING_MOVIES,
+                  builder: (context) {
+                    return moviesGridView(
+                      movieList: controller.trendingMovies?.results ?? [],
+                      scrollController: controller.trendingScrollController,
+                      isLoading: controller.istrendingMoviesLoading,
+                    );
+                  },
                 ),
-                moviesGridView(
-                  movieList: controller.nowPlayingMovieList,
-                  scrollController: controller.nowPlayingScrollController,
-                  isLoading: controller.isNowPlayingMoviesLoading,
+                GetBuilder<HomeController>(
+                  id: Strings.NOW_PLAYING_MOVIES,
+                  builder: (context) {
+                    return moviesGridView(
+                      movieList: controller.nowPlayingMovies?.results ?? [],
+                      scrollController: controller.nowPlayingScrollController,
+                      isLoading: controller.isNowPlayingMoviesLoading,
+                    );
+                  },
                 ),
               ],
             ),
