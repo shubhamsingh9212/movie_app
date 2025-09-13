@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:movie_app/app/bookmark_movies/bookmark_movies_controller.dart';
 import 'package:movie_app/data/enum.dart';
@@ -63,7 +64,7 @@ class MovieDetailsController extends GetxController {
             ?.results ??
         [];
 
-    final model = OfflineBookmarkedModel(
+    OfflineBookmarkedModel model = OfflineBookmarkedModel(
       id: movieDetails.id,
       isBookmarked: !isBookmarked.value,
     );
@@ -81,7 +82,7 @@ class MovieDetailsController extends GetxController {
       final controller = Get.find<BookmarkMoviesController>();
       controller.getBookMarkedMovies(forceLoad: true);
     }
-    final list = storage.getOfflineBookmarkMovies();
+    List<OfflineBookmarkedModel> list = storage.getOfflineBookmarkMovies();
     log("DATA: ${list.map((e) => e.toString()).toList()}");
   }
 
@@ -107,13 +108,31 @@ class MovieDetailsController extends GetxController {
     await storage.offlineBookmarkBox.clear();
   }
 
+  RxBool isDataLoading = true.obs;
   Future<void> isMovieBookMarked() async {
-    final network = await NetworkRequester.create();
-    final response = await network.apiClient.getRequest(
-      "${Urls.IS_MOVIE_BOOKMARKED}${movieDetails.id}/account_states",
-    );
-    if (response != null) {
-      isBookmarked.value = response["watchlist"];
+    isDataLoading.value = true;
+    if (await isInternetAvailable()) {
+      final network = await NetworkRequester.create();
+      final response = await network.apiClient.getRequest(
+        "${Urls.IS_MOVIE_BOOKMARKED}${movieDetails.id}/account_states",
+      );
+      if (response != null) {
+        isBookmarked.value = response["watchlist"];
+      }
+    } else {
+      isBookmarked.value = isOfflineMovieBookmarked(movieDetails.id ?? 0);
+      log(isBookmarked.toString());
     }
+    isDataLoading.value = false;
+  }
+
+  bool isOfflineMovieBookmarked(int movieId) {
+    final bookmarkMovies =
+        storage
+            .getCacheMovies(category: MovieCategory.bookmark.name)
+            ?.results ??
+        [];
+
+    return bookmarkMovies.any((movie) => movie.id == movieId);
   }
 }

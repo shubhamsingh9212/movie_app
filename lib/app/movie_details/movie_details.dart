@@ -25,20 +25,25 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Expanded(child: customAppBar(title: Strings.ABOUT_THE_MOVIE)),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: GestureDetector(
-                      onTap: () => controller.bookmarkMovie(),
-                      child: Obx(
-                        () => Icon(
-                          controller.isBookmarked.value
-                              ? Icons.bookmark
-                              : Icons.bookmark_border,
-                          size: 35,
-                          color: AppColors.red,
-                        ),
-                      ),
-                    ),
+                  Obx(
+                    () =>
+                        controller.isDataLoading.value
+                            ? const SizedBox()
+                            : Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: GestureDetector(
+                                onTap: () => controller.bookmarkMovie(),
+                                child: Obx(
+                                  () => Icon(
+                                    controller.isBookmarked.value
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_border,
+                                    size: 35,
+                                    color: AppColors.red,
+                                  ),
+                                ),
+                              ),
+                            ),
                   ),
                 ],
               ),
