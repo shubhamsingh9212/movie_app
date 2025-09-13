@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:movie_app/app/home/home_binding.dart';
 import 'package:movie_app/model/hive_movie_list_model.dart';
+import 'package:movie_app/model/hive_offline_bookmarked_movies.dart';
 import 'package:movie_app/routes/app_pages.dart';
+import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/theme/app_colors.dart';
 
 void main() async {
-  await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(MovieListHiveModelAdapter());
   Hive.registerAdapter(ResultHiveModelAdapter());
-  Hive.registerAdapter(
-    DatesHiveModelAdapter(),
-  );
+  Hive.registerAdapter(DatesHiveModelAdapter());
+  Hive.registerAdapter(OfflineBookmarkedHiveModelAdapter());
+  await Storage().init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: AppColors.purple,

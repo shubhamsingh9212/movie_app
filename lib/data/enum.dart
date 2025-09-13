@@ -1,1 +1,1 @@
-enum MovieCategory { trending, nowPlaying }
+enum MovieCategory { trending, nowPlaying, bookmark, offlineBookmark }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:movie_app/app/home/home_controller.dart';
 import 'package:movie_app/model/movie_list_model.dart';
 import 'package:movie_app/routes/app_pages.dart';
 import 'package:movie_app/theme/app_colors.dart';
@@ -9,11 +8,14 @@ import 'package:movie_app/widgets/custom_cached_network_image.dart';
 import 'package:movie_app/widgets/custom_text.dart';
 import 'package:movie_app/widgets/dotted_spinner.dart';
 
-Widget moviePoster({required Result movie}) {
+Widget moviePoster({required Result movie, bool isBookmarked = false}) {
   return InkWell(
     onTap: () {
       FocusManager.instance.primaryFocus?.unfocus();
-      Get.toNamed(Routes.MOVIE_DETAILS, arguments: {"movie_details": movie});
+      Get.toNamed(
+        Routes.MOVIE_DETAILS,
+        arguments: {"movie_details": movie, "is_bookmarked": isBookmarked},
+      );
     },
     child: Container(
       height: 300,
@@ -59,6 +61,7 @@ Widget moviesGridView({
   required List<Result>? movieList,
   ScrollController? scrollController,
   required RxBool isLoading,
+  bool isBookmarked = false,
 }) {
   return SingleChildScrollView(
     controller: scrollController,
@@ -71,7 +74,10 @@ Widget moviesGridView({
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           children: List.generate(movieList?.length ?? 0, (index) {
-            return moviePoster(movie: movieList?[index] ?? Result());
+            return moviePoster(
+              movie: movieList?[index] ?? Result(),
+              isBookmarked: isBookmarked,
+            );
           }),
         ),
         Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),

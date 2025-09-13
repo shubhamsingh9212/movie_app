@@ -79,6 +79,7 @@ class Result {
   String? releaseDate;
   String? title;
   bool? video;
+  bool? isBookmarked;
   double? voteAverage;
   int? voteCount;
 
@@ -95,6 +96,7 @@ class Result {
     this.releaseDate,
     this.title,
     this.video,
+    this.isBookmarked,
     this.voteAverage,
     this.voteCount,
   });
@@ -115,6 +117,7 @@ class Result {
     releaseDate: json["release_date"],
     title: json["title"],
     video: json["video"],
+    isBookmarked: null,
     voteAverage: json["vote_average"]?.toDouble(),
     voteCount: json["vote_count"],
   );
@@ -135,10 +138,18 @@ class Result {
     "video": video,
     "vote_average": voteAverage,
     "vote_count": voteCount,
+    
   };
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
 
+    return other is Result && other.id == id;
+  }
 
+  @override
+  int get hashCode => id.hashCode;
 }
 
 extension MovieListConverter on MovieListModel {
@@ -174,6 +185,3 @@ extension HiveToOriginal on MovieListHiveModel {
     );
   }
 }
-
-
-

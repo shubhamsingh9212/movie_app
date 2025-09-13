@@ -1,5 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'api_client.dart';
@@ -59,4 +63,36 @@ class NetworkRequester {
       "X-Device-Id": deviceId,
     };
   }
+}
+
+Future<bool> isInternetAvailable() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  if ((connectivityResult.isNotEmpty) &&
+      (connectivityResult.first == ConnectivityResult.none)) {
+    return false;
+  }
+  try {
+    final result = await InternetAddress.lookup('example.com');
+    return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+  } catch (_) {
+    return false;
+  }
+}
+
+void startInternetListener() {
+  Connectivity().onConnectivityChanged.listen((result) async {
+    if (result.first != ConnectivityResult.none) {
+      final hasInternet = await isInternetAvailable();
+      if (hasInternet) {
+        Get.snackbar(
+          "Back Online",
+          "Movie lists updated.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    }
+  });
 }

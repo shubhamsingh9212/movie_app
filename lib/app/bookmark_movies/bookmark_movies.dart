@@ -19,10 +19,15 @@ class BookmarkMoviesView extends GetView<BookmarkMoviesController> {
             customAppBar(title: Strings.BOOKMARK),
             customSizedBox(height: 10),
             Expanded(
-              child: moviesGridView(
-                scrollController: controller.scrollController,
-                movieList: controller.bookMarkMovieList,
-                isLoading: controller.isLoading,
+              child: GetBuilder<BookmarkMoviesController>(
+                builder: (context) {
+                  return moviesGridView(
+                    scrollController: controller.scrollController,
+                    movieList: controller.bookmarkMovies?.results ?? [],
+                    isLoading: controller.isLoading,
+                    isBookmarked: true,
+                  );
+                },
               ),
             ),
           ],
