@@ -13,10 +13,10 @@ class BookmarkMoviesController extends GetxController {
   Storage storage = Storage();
   ScrollController scrollController = ScrollController();
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     isFetching.value = true;
-    getBookMarkedMovies(forceLoad: true);
+    await getBookMarkedMovies(forceLoad: true);
     isFetching.value = false;
     scrollListerner();
   }

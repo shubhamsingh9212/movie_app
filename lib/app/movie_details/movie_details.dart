@@ -45,6 +45,14 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
                               ),
                             ),
                   ),
+                  GestureDetector(
+                    onTap: () => controller.shareMovie(context),
+                    child:  Padding(
+                      padding: const EdgeInsets.only(right:18.0),
+                      child: Icon(Icons.share, size: 35, color: AppColors.red),
+                    ),
+                  
+                  ),
                 ],
               ),
               customSizedBox(height: 20),

@@ -18,17 +18,21 @@ class SearchMoviesController extends GetxController {
   RxList<Result>? searchedMovieList = <Result>[].obs;
   Future<void> searchMovies({int page = 1}) async {
     isFetching.value = true;
-    final network = await NetworkRequester.create();
-    final response = await network.apiClient.getRequest(
-      Urls.SEARCH_MOVIES,
-      query: {'query': query, 'language': 'en-US', 'page': page},
-    );
-    isFetching.value = false;
-    if (response != null) {
-      searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
-      currentPage = searchedMoviesResponse?.page ?? 1;
-      totalPages = searchedMoviesResponse?.totalPages ?? 1;
-      searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);
+    try {
+      final network = await NetworkRequester.create();
+      final response = await network.apiClient.getRequest(
+        Urls.SEARCH_MOVIES,
+        query: {'query': query, 'language': 'en-US', 'page': page},
+      );
+      isFetching.value = false;
+      if (response != null) {
+        searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
+        currentPage = searchedMoviesResponse?.page ?? 1;
+        totalPages = searchedMoviesResponse?.totalPages ?? 1;
+        searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);
+      }
+    } catch (e) {
+      isFetching.value = false;
     }
   }
 

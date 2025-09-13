@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_app/app/bookmark_movies/bookmark_movies_controller.dart';
 import 'package:movie_app/data/enum.dart';
@@ -8,22 +9,25 @@ import 'package:movie_app/model/offline_bookmarked_movies.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MovieDetailsController extends GetxController {
   Result movieDetails = Result();
   final Storage storage = Storage();
-
+  RxBool isDataLoading = true.obs;
   RxBool isBookmarked = false.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     dynamic arguments = Get.arguments;
     if (arguments != null) {
       movieDetails = arguments["movie_details"];
       isBookmarked.value = arguments["is_bookmarked"] ?? false;
     }
-    isMovieBookMarked();
+    isDataLoading.value = true;
+    await isMovieBookMarked();
+    isDataLoading.value = false;
   }
 
   Future<void> bookmarkMovie() async {
@@ -108,9 +112,7 @@ class MovieDetailsController extends GetxController {
     await storage.offlineBookmarkBox.clear();
   }
 
-  RxBool isDataLoading = true.obs;
   Future<void> isMovieBookMarked() async {
-    isDataLoading.value = true;
     if (await isInternetAvailable()) {
       final network = await NetworkRequester.create();
       final response = await network.apiClient.getRequest(
@@ -121,9 +123,7 @@ class MovieDetailsController extends GetxController {
       }
     } else {
       isBookmarked.value = isOfflineMovieBookmarked(movieDetails.id ?? 0);
-      log(isBookmarked.toString());
     }
-    isDataLoading.value = false;
   }
 
   bool isOfflineMovieBookmarked(int movieId) {
@@ -134,5 +134,18 @@ class MovieDetailsController extends GetxController {
         [];
 
     return bookmarkMovies.any((movie) => movie.id == movieId);
+  }
+
+  void shareMovie(BuildContext context) async {
+    final String deepLink = "mymoviesapp://movie/${movieDetails.id}";
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    final result = await SharePlus.instance.share(
+      ShareParams(
+        text: "Check out this movie: ${movieDetails.title}\n$deepLink",
+        title: "Share Movie",
+        sharePositionOrigin:
+            box.localToGlobal(Offset.zero) & box.size, // Important for iPad!
+      ),
+    );
   }
 }
