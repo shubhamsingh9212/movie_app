@@ -7,6 +7,7 @@ import 'package:movie_app/theme/app_colors.dart';
 import 'package:movie_app/widgets/custom_cached_network_image.dart';
 import 'package:movie_app/widgets/custom_text.dart';
 import 'package:movie_app/widgets/dotted_spinner.dart';
+import 'package:shimmer/shimmer.dart';
 
 Widget moviePoster({required Result movie, bool isBookmarked = false}) {
   return InkWell(
@@ -61,27 +62,62 @@ Widget moviesGridView({
   required List<Result>? movieList,
   ScrollController? scrollController,
   required RxBool isLoading,
+  required RxBool isFetching,
   bool isBookmarked = false,
 }) {
-  return SingleChildScrollView(
-    controller: scrollController,
+  return Obx(() {
+    if (isFetching.value) {
+      return shimmerGrid();
+    }
+    return SingleChildScrollView(
+      controller: scrollController,
+      padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+      child: Column(
+        children: [
+          StaggeredGrid.count(
+            axisDirection: AxisDirection.down,
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            children: List.generate(movieList?.length ?? 0, (index) {
+              return moviePoster(
+                movie: movieList?[index] ?? Result(),
+                isBookmarked: isBookmarked,
+              );
+            }),
+          ),
+          Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
+        ],
+      ),
+    );
+  });
+}
+
+Widget shimmerMovieItem() {
+  return Container(
+    height: 300,
+    decoration: BoxDecoration(
+      color: Colors.grey[300],
+      borderRadius: BorderRadius.circular(8),
+    ),
+  );
+}
+
+Widget shimmerGrid() {
+  return Padding(
     padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-    child: Column(
-      children: [
-        StaggeredGrid.count(
-          axisDirection: AxisDirection.down,
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          children: List.generate(movieList?.length ?? 0, (index) {
-            return moviePoster(
-              movie: movieList?[index] ?? Result(),
-              isBookmarked: isBookmarked,
-            );
-          }),
-        ),
-        Obx(() => isLoading.value ? DottedSpinner() : const SizedBox()),
-      ],
+    child: StaggeredGrid.count(
+      axisDirection: AxisDirection.down,
+      crossAxisCount: 2,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      children: List.generate(6, (index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade800,
+          highlightColor: Colors.grey.shade700,
+          child: shimmerMovieItem(),
+        );
+      }),
     ),
   );
 }

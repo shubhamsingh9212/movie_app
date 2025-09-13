@@ -7,6 +7,7 @@ import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/network_requester.dart';
 
 class SearchMoviesController extends GetxController {
+  RxBool isFetching = false.obs;
   TextEditingController searchController = TextEditingController();
   ScrollController scrollController = ScrollController();
   RxString query = "a".obs;
@@ -16,11 +17,13 @@ class SearchMoviesController extends GetxController {
   MovieListModel? searchedMoviesResponse;
   RxList<Result>? searchedMovieList = <Result>[].obs;
   Future<void> searchMovies({int page = 1}) async {
+    isFetching.value = true;
     final network = await NetworkRequester.create();
     final response = await network.apiClient.getRequest(
       Urls.SEARCH_MOVIES,
       query: {'query': query, 'language': 'en-US', 'page': page},
     );
+    isFetching.value = false;
     if (response != null) {
       searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
       currentPage = searchedMoviesResponse?.page ?? 1;

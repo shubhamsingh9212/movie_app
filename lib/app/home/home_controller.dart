@@ -10,6 +10,7 @@ import 'package:movie_app/service/network_requester.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   Storage storage = Storage();
+  RxBool isFetching = false.obs;
   late TabController tabController;
   List<String> tabTitles = [
     Strings.TRENDING_MOVIES,
@@ -20,11 +21,17 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   void onInit() async {
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
-    getTrendingMoviesList(forceLoad: true);
+    getInitialData();
     trendingScrollListerner();
-    getNowPlayingMoviesList(forceLoad: true);
     nowPlayingScrollListerner();
     startInternetListener();
+  }
+
+  void getInitialData() async {
+    isFetching.value = true;
+    await getTrendingMoviesList(forceLoad: true);
+    await getNowPlayingMoviesList(forceLoad: true);
+    isFetching.value = false;
   }
 
   RxBool istrendingMoviesLoading = false.obs;

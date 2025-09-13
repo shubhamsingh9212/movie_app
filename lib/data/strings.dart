@@ -8,4 +8,5 @@ class Strings {
   static const ABOUT_THE_MOVIE = "About the Movie!";
   static const SEARCH_MOVIE = "Search Movie!";
   static const BOOKMARK = "Bookmark!";
+  static const BACK_ONLINE = "Back Online!";
 }

@@ -46,6 +46,7 @@ class MoviesTabBar extends GetView<HomeController> {
                       movieList: controller.trendingMovies?.results ?? [],
                       scrollController: controller.trendingScrollController,
                       isLoading: controller.istrendingMoviesLoading,
+                      isFetching: controller.isFetching,
                     );
                   },
                 ),
@@ -56,6 +57,7 @@ class MoviesTabBar extends GetView<HomeController> {
                       movieList: controller.nowPlayingMovies?.results ?? [],
                       scrollController: controller.nowPlayingScrollController,
                       isLoading: controller.isNowPlayingMoviesLoading,
+                      isFetching: controller.isFetching,
                     );
                   },
                 ),

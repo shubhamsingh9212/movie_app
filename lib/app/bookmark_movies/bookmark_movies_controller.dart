@@ -9,12 +9,15 @@ import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
 
 class BookmarkMoviesController extends GetxController {
+  RxBool isFetching = false.obs;
   Storage storage = Storage();
   ScrollController scrollController = ScrollController();
   @override
   void onInit() {
     super.onInit();
+    isFetching.value = true;
     getBookMarkedMovies(forceLoad: true);
+    isFetching.value = false;
     scrollListerner();
   }
 

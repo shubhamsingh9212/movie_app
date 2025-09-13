@@ -26,6 +26,7 @@ class BookmarkMoviesView extends GetView<BookmarkMoviesController> {
                     movieList: controller.bookmarkMovies?.results ?? [],
                     isLoading: controller.isLoading,
                     isBookmarked: true,
+                    isFetching: controller.isFetching,
                   );
                 },
               ),

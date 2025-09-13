@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:movie_app/data/strings.dart';
 import 'package:movie_app/routes/urls.dart';
+import 'package:movie_app/theme/app_colors.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
 import 'api_client.dart';
 
 class NetworkRequester {
@@ -84,13 +87,12 @@ void startInternetListener() {
     if (result.first != ConnectivityResult.none) {
       final hasInternet = await isInternetAvailable();
       if (hasInternet) {
-        Get.snackbar(
-          "Back Online",
-          "Movie lists updated.",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+        Fluttertoast.showToast(
+          msg: Strings.BACK_ONLINE,
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: AppColors.white,
+          textColor: AppColors.red,
+          fontSize: 16.0,
         );
       }
     }

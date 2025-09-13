@@ -32,6 +32,7 @@ class SearchMoviesView extends GetView<SearchMoviesController> {
                 scrollController: controller.scrollController,
                 movieList: controller.searchedMovieList,
                 isLoading: controller.isLoading,
+                isFetching: controller.isFetching,
               ),
             ),
           ],
