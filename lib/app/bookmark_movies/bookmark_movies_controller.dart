@@ -15,9 +15,7 @@ class BookmarkMoviesController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    isFetching.value = true;
     await getBookMarkedMovies(forceLoad: true);
-    isFetching.value = false;
     scrollListerner();
   }
 
@@ -30,29 +28,35 @@ class BookmarkMoviesController extends GetxController {
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
-      final network = await NetworkRequester.create();
-      final response = await network.apiClient.getRequest(
-        Urls.BOOKMARKED_MOVIE_LIST,
-        query: {
-          'language': 'en-US',
-          'page': page,
-          'sort_by': "created_at.desc",
-        },
-      );
-      if (response != null) {
-        MovieListModel? bookmarkMoviesResponse = movieListModelFromJson(
-          jsonEncode(response),
+      try {
+        isFetching.value = true;
+        final network = await NetworkRequester.create();
+        final response = await network.apiClient.getRequest(
+          Urls.BOOKMARKED_MOVIE_LIST,
+          query: {
+            'language': 'en-US',
+            'page': page,
+            'sort_by': "created_at.desc",
+          },
         );
-        bookmarkMovieList?.addAll(bookmarkMoviesResponse.results ?? []);
-        bookmarkMovies = MovieListModel(
-          results: bookmarkMovieList,
-          page: bookmarkMoviesResponse.page,
-          totalPages: bookmarkMoviesResponse.totalPages,
-        );
-        storage.cacheMovies(
-          category: MovieCategory.bookmark.name,
-          data: bookmarkMovies?.toHiveModel(),
-        );
+        isFetching.value = false;
+        if (response != null) {
+          MovieListModel? bookmarkMoviesResponse = movieListModelFromJson(
+            jsonEncode(response),
+          );
+          bookmarkMovieList?.addAll(bookmarkMoviesResponse.results ?? []);
+          bookmarkMovies = MovieListModel(
+            results: bookmarkMovieList,
+            page: bookmarkMoviesResponse.page,
+            totalPages: bookmarkMoviesResponse.totalPages,
+          );
+          storage.cacheMovies(
+            category: MovieCategory.bookmark.name,
+            data: bookmarkMovies?.toHiveModel(),
+          );
+        }
+      } catch (e) {
+        isFetching.value = false;
       }
     } else if (forceLoad) {
       bookmarkMovieList =

@@ -19,7 +19,7 @@ void main() async {
   await Storage().init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: AppColors.purple,
+      statusBarColor: AppColors.black,
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.light,
     ),

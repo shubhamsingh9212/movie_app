@@ -13,7 +13,7 @@ Widget customAppBar({String title = ""}) {
           child: customText(
             title: title,
             color: AppColors.white,
-            fontSize: 32,
+            fontSize: 25,
             maxLines: 3,
             fontWeight: FontWeight.w800,
           ),

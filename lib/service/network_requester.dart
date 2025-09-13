@@ -82,11 +82,12 @@ Future<bool> isInternetAvailable() async {
   }
 }
 
+bool firstCheckDone = false;
 void startInternetListener() {
   Connectivity().onConnectivityChanged.listen((result) async {
     if (result.first != ConnectivityResult.none) {
       final hasInternet = await isInternetAvailable();
-      if (hasInternet) {
+      if (hasInternet && firstCheckDone) {
         Fluttertoast.showToast(
           msg: Strings.BACK_ONLINE,
           toastLength: Toast.LENGTH_LONG,
@@ -96,5 +97,6 @@ void startInternetListener() {
         );
       }
     }
+    firstCheckDone = true;
   });
 }
