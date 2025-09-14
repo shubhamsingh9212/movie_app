@@ -1,14 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:movie_app/app/bookmark_movies/bookmark_movies_controller.dart';
 import 'package:movie_app/data/enum.dart';
+import 'package:movie_app/data/strings.dart';
 import 'package:movie_app/model/movie_list_model.dart';
 import 'package:movie_app/model/offline_bookmarked_movies.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
+import 'package:movie_app/theme/app_colors.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MovieDetailsController extends GetxController {
@@ -37,6 +40,12 @@ class MovieDetailsController extends GetxController {
     } else {
       offlineBookmark();
     }
+    Fluttertoast.showToast(
+      msg: Strings.BOOKMARK_UPDATED,
+      backgroundColor: AppColors.white,
+      textColor: AppColors.red,
+      fontSize: 16.0,
+    );
   }
 
   Future<void> onlineBookmark() async {

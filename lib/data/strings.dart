@@ -9,4 +9,5 @@ class Strings {
   static const SEARCH_MOVIE = "Search Movie!";
   static const BOOKMARK = "Bookmark!";
   static const BACK_ONLINE = "Back Online!";
+  static const BOOKMARK_UPDATED = "Bookmark status updated.";
 }

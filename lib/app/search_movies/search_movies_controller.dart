@@ -17,22 +17,16 @@ class SearchMoviesController extends GetxController {
   MovieListModel? searchedMoviesResponse;
   RxList<Result>? searchedMovieList = <Result>[].obs;
   Future<void> searchMovies({int page = 1}) async {
-    isFetching.value = true;
-    try {
-      final network = await NetworkRequester.create();
-      final response = await network.apiClient.getRequest(
-        Urls.SEARCH_MOVIES,
-        query: {'query': query, 'language': 'en-US', 'page': page},
-      );
-      isFetching.value = false;
-      if (response != null) {
-        searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
-        currentPage = searchedMoviesResponse?.page ?? 1;
-        totalPages = searchedMoviesResponse?.totalPages ?? 1;
-        searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);
-      }
-    } catch (e) {
-      isFetching.value = false;
+    final network = await NetworkRequester.create();
+    final response = await network.apiClient.getRequest(
+      Urls.SEARCH_MOVIES,
+      query: {'query': query, 'language': 'en-US', 'page': page},
+    );
+    if (response != null) {
+      searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
+      currentPage = searchedMoviesResponse?.page ?? 1;
+      totalPages = searchedMoviesResponse?.totalPages ?? 1;
+      searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);
     }
   }
 
@@ -54,12 +48,16 @@ class SearchMoviesController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    searchMovies();
-    debounce(query, (callback) {
+    isFetching.value = true;
+    await searchMovies();
+    isFetching.value = false;
+    debounce(query, (callback) async {
       searchedMovieList?.clear();
-      searchMovies();
+      isFetching.value = true;
+      await searchMovies();
+      isFetching.value = false;
     }, time: Duration(milliseconds: 600));
     scrollListerner();
   }
