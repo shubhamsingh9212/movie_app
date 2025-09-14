@@ -17,4 +17,17 @@ class BookmarkRepository extends BaseRepository {
         ? RepoResponse(error: response)
         : RepoResponse(data: movieListModelFromJson(jsonEncode(response)));
   }
+
+  Future<RepoResponse<bool>> onlineBookmark({
+    required int id,
+    required bool status,
+  }) async {
+    final response = await controller.apiClient.postRequest(
+      Urls.BOOKMARK_MOVIE,
+      body: {"media_type": "movie", "media_id": id, "watchlist": status},
+    );
+    return response is APIException
+        ? RepoResponse(error: response)
+        : RepoResponse(data: true);
+  }
 }

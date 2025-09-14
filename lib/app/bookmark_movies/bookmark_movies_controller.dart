@@ -4,6 +4,7 @@ import 'package:movie_app/app/bookmark_movies/bookmark_repository.dart';
 import 'package:movie_app/base/base_controller.dart';
 import 'package:movie_app/data/enum.dart';
 import 'package:movie_app/data/model/movie_list_model.dart';
+import 'package:movie_app/data/model/offline_bookmarked_movies.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
 
@@ -29,8 +30,8 @@ class BookmarkMoviesController extends BaseController<BookmarkRepository> {
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
+      await syncOfflineBookmarks();
       final response = await repository.getBookMarkedMovies(page: page);
-      isFetching.value = false;
       MovieListModel? bookmarkMoviesResponse = response.data;
       if (bookmarkMoviesResponse != null) {
         bookmarkMovieList?.addAll(bookmarkMoviesResponse.results ?? []);
@@ -43,17 +44,32 @@ class BookmarkMoviesController extends BaseController<BookmarkRepository> {
           category: MovieCategory.bookmark.name,
           data: bookmarkMovies?.toHiveModel(),
         );
-      } else if (forceLoad) {
-        bookmarkMovieList =
-            storage
-                .getCacheMovies(category: MovieCategory.bookmark.name)
-                ?.results;
-        bookmarkMovies = storage.getCacheMovies(
-          category: MovieCategory.bookmark.name,
-        );
       }
-      update();
+    } else if (forceLoad) {
+      bookmarkMovieList =
+          storage
+              .getCacheMovies(category: MovieCategory.bookmark.name)
+              ?.results;
+      bookmarkMovies = storage.getCacheMovies(
+        category: MovieCategory.bookmark.name,
+      );
     }
+    update();
+  }
+
+  Future<void> syncOfflineBookmarks() async {
+    List<OfflineBookmarkedModel> offlineBookmarks =
+        storage.getOfflineBookmarkMovies();
+    if (offlineBookmarks.isEmpty) return;
+    for (var bookmark in offlineBookmarks) {
+      try {
+        await repository.onlineBookmark(
+          id: bookmark.id ?? 0,
+          status: bookmark.isBookmarked ?? false,
+        );
+      } catch (e) {}
+    }
+    await storage.offlineBookmarkBox.clear();
   }
 
   void scrollListerner() {
