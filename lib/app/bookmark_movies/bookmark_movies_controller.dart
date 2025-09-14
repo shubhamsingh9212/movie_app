@@ -1,21 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movie_app/app/bookmark_movies/bookmark_repository.dart';
+import 'package:movie_app/base/base_controller.dart';
 import 'package:movie_app/data/enum.dart';
 import 'package:movie_app/data/model/movie_list_model.dart';
-import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
 
-class BookmarkMoviesController extends GetxController {
+class BookmarkMoviesController extends BaseController<BookmarkRepository> {
   RxBool isFetching = false.obs;
   Storage storage = Storage();
   ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
     super.onInit();
+    isFetching.value = true;
     await getBookMarkedMovies(forceLoad: true);
+    isFetching.value = false;
     scrollListerner();
   }
 
@@ -28,46 +29,31 @@ class BookmarkMoviesController extends GetxController {
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
-      try {
-        isFetching.value = true;
-        final network = await NetworkRequester.create();
-        final response = await network.apiClient.getRequest(
-          Urls.BOOKMARKED_MOVIE_LIST,
-          query: {
-            'language': 'en-US',
-            'page': page,
-            'sort_by': "created_at.desc",
-          },
+      final response = await repository.getBookMarkedMovies(page: page);
+      isFetching.value = false;
+      MovieListModel? bookmarkMoviesResponse = response.data;
+      if (bookmarkMoviesResponse != null) {
+        bookmarkMovieList?.addAll(bookmarkMoviesResponse.results ?? []);
+        bookmarkMovies = MovieListModel(
+          results: bookmarkMovieList,
+          page: bookmarkMoviesResponse.page,
+          totalPages: bookmarkMoviesResponse.totalPages,
         );
-        isFetching.value = false;
-        if (response != null) {
-          MovieListModel? bookmarkMoviesResponse = movieListModelFromJson(
-            jsonEncode(response),
-          );
-          bookmarkMovieList?.addAll(bookmarkMoviesResponse.results ?? []);
-          bookmarkMovies = MovieListModel(
-            results: bookmarkMovieList,
-            page: bookmarkMoviesResponse.page,
-            totalPages: bookmarkMoviesResponse.totalPages,
-          );
-          storage.cacheMovies(
-            category: MovieCategory.bookmark.name,
-            data: bookmarkMovies?.toHiveModel(),
-          );
-        }
-      } catch (e) {
-        isFetching.value = false;
+        storage.cacheMovies(
+          category: MovieCategory.bookmark.name,
+          data: bookmarkMovies?.toHiveModel(),
+        );
+      } else if (forceLoad) {
+        bookmarkMovieList =
+            storage
+                .getCacheMovies(category: MovieCategory.bookmark.name)
+                ?.results;
+        bookmarkMovies = storage.getCacheMovies(
+          category: MovieCategory.bookmark.name,
+        );
       }
-    } else if (forceLoad) {
-      bookmarkMovieList =
-          storage
-              .getCacheMovies(category: MovieCategory.bookmark.name)
-              ?.results;
-      bookmarkMovies = storage.getCacheMovies(
-        category: MovieCategory.bookmark.name,
-      );
+      update();
     }
-    update();
   }
 
   void scrollListerner() {

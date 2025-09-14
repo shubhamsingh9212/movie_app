@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movie_app/app/search_movies/search_movie_repository.dart';
+import 'package:movie_app/base/base_controller.dart';
 import 'package:movie_app/data/model/movie_list_model.dart';
-import 'package:movie_app/routes/urls.dart';
-import 'package:movie_app/service/network_requester.dart';
 
-class SearchMoviesController extends GetxController {
+class SearchMoviesController extends BaseController<SearchMovieRepository> {
   RxBool isFetching = false.obs;
   TextEditingController searchController = TextEditingController();
   ScrollController scrollController = ScrollController();
@@ -17,13 +15,12 @@ class SearchMoviesController extends GetxController {
   MovieListModel? searchedMoviesResponse;
   RxList<Result>? searchedMovieList = <Result>[].obs;
   Future<void> searchMovies({int page = 1}) async {
-    final network = await NetworkRequester.create();
-    final response = await network.apiClient.getRequest(
-      Urls.SEARCH_MOVIES,
-      query: {'query': query, 'language': 'en-US', 'page': page},
+    final response = await repository.searchMovies(
+      page: page,
+      query: query.value,
     );
-    if (response != null) {
-      searchedMoviesResponse = movieListModelFromJson(jsonEncode(response));
+    searchedMoviesResponse = response.data;
+    if (searchedMoviesResponse != null) {
       currentPage = searchedMoviesResponse?.page ?? 1;
       totalPages = searchedMoviesResponse?.totalPages ?? 1;
       searchedMovieList?.addAll(searchedMoviesResponse?.results ?? []);

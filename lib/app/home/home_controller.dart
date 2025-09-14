@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movie_app/app/home/home_repository.dart';
 import 'package:movie_app/base/base_controller.dart';
 import 'package:movie_app/data/enum.dart';
-import 'package:movie_app/data/repository/movie_repository.dart';
-import 'package:movie_app/data/strings.dart';
 import 'package:movie_app/data/model/movie_list_model.dart';
-import 'package:movie_app/routes/urls.dart';
+import 'package:movie_app/data/strings.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
 
@@ -45,17 +43,14 @@ class HomeController extends BaseController<MovieRepository>
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
-      final response = await repository.getTrendingMoviesList(
-        forceLoad: forceLoad,
-        page: page,
-      );
-      if (response.data != null) {
-        MovieListModel? trendingMoviesResponse = response.data;
-        trendingMovieList?.addAll(trendingMoviesResponse?.results ?? []);
+      final response = await repository.getTrendingMoviesList(page: page);
+      MovieListModel? trendingMoviesResponse = response.data;
+      if (trendingMoviesResponse != null) {
+        trendingMovieList?.addAll(trendingMoviesResponse.results ?? []);
         trendingMovies = MovieListModel(
           results: trendingMovieList,
-          page: trendingMoviesResponse?.page,
-          totalPages: trendingMoviesResponse?.totalPages,
+          page: trendingMoviesResponse.page,
+          totalPages: trendingMoviesResponse.totalPages,
         );
         storage.cacheMovies(
           category: MovieCategory.trending.name,
@@ -97,15 +92,9 @@ class HomeController extends BaseController<MovieRepository>
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
-      final network = await NetworkRequester.create();
-      final response = await network.apiClient.getRequest(
-        Urls.NOW_PLAYING_MOVIES,
-        query: {'language': 'en-US', 'page': page},
-      );
-      if (response != null) {
-        MovieListModel? trendingMoviesResponse = movieListModelFromJson(
-          jsonEncode(response),
-        );
+      final response = await repository.getNowPlayingMoviesList(page: page);
+      MovieListModel? trendingMoviesResponse = response.data;
+      if (trendingMoviesResponse != null) {
         nowPlayingMovieList?.addAll(trendingMoviesResponse.results ?? []);
         nowPlayingMovies = MovieListModel(
           results: nowPlayingMovieList,

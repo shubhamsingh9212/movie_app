@@ -8,10 +8,21 @@ import 'package:movie_app/service/exception_handler.dart';
 class MovieRepository extends BaseRepository {
   Future<RepoResponse<MovieListModel>> getTrendingMoviesList({
     int page = 1,
-    bool forceLoad = false,
   }) async {
     final response = await controller.apiClient.getRequest(
       Urls.TRENDING_MOVIES,
+      query: {'language': 'en-US', 'page': page},
+    );
+    return response is APIException
+        ? RepoResponse(error: response)
+        : RepoResponse(data: movieListModelFromJson(jsonEncode(response)));
+  }
+
+  Future<RepoResponse<MovieListModel>> getNowPlayingMoviesList({
+    int page = 1,
+  }) async {
+    final response = await controller.apiClient.getRequest(
+      Urls.NOW_PLAYING_MOVIES,
       query: {'language': 'en-US', 'page': page},
     );
     return response is APIException
