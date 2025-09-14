@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:movie_app/model/movie_list_model.dart';
+import 'package:movie_app/data/model/movie_list_model.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/network_requester.dart';
 

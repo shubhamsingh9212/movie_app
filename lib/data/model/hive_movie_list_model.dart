@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:movie_app/model/movie_list_model.dart';
+import 'package:movie_app/data/model/movie_list_model.dart';
 
 part 'hive_movie_list_model.g.dart';
 

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movie_app/base/base_controller.dart';
 import 'package:movie_app/data/enum.dart';
+import 'package:movie_app/data/repository/movie_repository.dart';
 import 'package:movie_app/data/strings.dart';
-import 'package:movie_app/model/movie_list_model.dart';
+import 'package:movie_app/data/model/movie_list_model.dart';
 import 'package:movie_app/routes/urls.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/service/network_requester.dart';
 
-class HomeController extends GetxController with GetTickerProviderStateMixin {
+class HomeController extends BaseController<MovieRepository>
+    with GetTickerProviderStateMixin {
   Storage storage = Storage();
   RxBool isFetching = false.obs;
   late TabController tabController;
@@ -42,20 +45,17 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     bool forceLoad = false,
   }) async {
     if (await isInternetAvailable()) {
-      final network = await NetworkRequester.create();
-      final response = await network.apiClient.getRequest(
-        Urls.TRENDING_MOVIES,
-        query: {'language': 'en-US', 'page': page},
+      final response = await repository.getTrendingMoviesList(
+        forceLoad: forceLoad,
+        page: page,
       );
-      if (response != null) {
-        MovieListModel? trendingMoviesResponse = movieListModelFromJson(
-          jsonEncode(response),
-        );
-        trendingMovieList?.addAll(trendingMoviesResponse.results ?? []);
+      if (response.data != null) {
+        MovieListModel? trendingMoviesResponse = response.data;
+        trendingMovieList?.addAll(trendingMoviesResponse?.results ?? []);
         trendingMovies = MovieListModel(
           results: trendingMovieList,
-          page: trendingMoviesResponse.page,
-          totalPages: trendingMoviesResponse.totalPages,
+          page: trendingMoviesResponse?.page,
+          totalPages: trendingMoviesResponse?.totalPages,
         );
         storage.cacheMovies(
           category: MovieCategory.trending.name,

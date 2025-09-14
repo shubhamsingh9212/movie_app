@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:movie_app/model/hive_movie_list_model.dart';
+import 'package:movie_app/data/model/hive_movie_list_model.dart';
 
 MovieListModel movieListModelFromJson(String str) =>
     MovieListModel.fromJson(json.decode(str));

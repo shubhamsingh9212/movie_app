@@ -18,7 +18,9 @@ class NetworkRequester {
   PackageInfo? packageInfo;
 
   NetworkRequester._internal();
-
+  NetworkRequester() {
+    _init();
+  }
   static Future<NetworkRequester> create() async {
     final requester = NetworkRequester._internal();
     await requester._init();

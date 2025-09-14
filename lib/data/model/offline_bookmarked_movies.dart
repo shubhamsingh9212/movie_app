@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:movie_app/model/hive_offline_bookmarked_movies.dart';
+import 'package:movie_app/data/model/hive_offline_bookmarked_movies.dart';
 
 OfflineBookmarkedModel offlineBookmarkedModelFromJson(String str) =>
     OfflineBookmarkedModel.fromJson(json.decode(str));

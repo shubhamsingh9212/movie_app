@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:movie_app/app/home/home_binding.dart';
-import 'package:movie_app/model/hive_movie_list_model.dart';
-import 'package:movie_app/model/hive_offline_bookmarked_movies.dart';
+import 'package:movie_app/app/app_binding.dart';
+import 'package:movie_app/data/model/hive_movie_list_model.dart';
+import 'package:movie_app/data/model/hive_offline_bookmarked_movies.dart';
 import 'package:movie_app/routes/app_pages.dart';
 import 'package:movie_app/service/local_db.dart';
 import 'package:movie_app/theme/app_colors.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     return GestureDetector(
       child: GetMaterialApp(
         initialRoute: Routes.HOME,
-        initialBinding: HomeBinding(),
+        initialBinding: AppBinding(),
         debugShowCheckedModeBanner: false,
         title: 'My Choice',
         theme: ThemeData(

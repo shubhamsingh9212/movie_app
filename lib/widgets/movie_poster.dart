@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:movie_app/model/movie_list_model.dart';
+import 'package:movie_app/data/model/movie_list_model.dart';
 import 'package:movie_app/routes/app_pages.dart';
 import 'package:movie_app/theme/app_colors.dart';
 import 'package:movie_app/widgets/custom_cached_network_image.dart';

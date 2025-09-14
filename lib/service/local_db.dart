@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
-import 'package:movie_app/model/hive_movie_list_model.dart';
-import 'package:movie_app/model/hive_offline_bookmarked_movies.dart';
-import 'package:movie_app/model/movie_list_model.dart';
-import 'package:movie_app/model/offline_bookmarked_movies.dart';
+import 'package:movie_app/data/model/hive_movie_list_model.dart';
+import 'package:movie_app/data/model/hive_offline_bookmarked_movies.dart';
+import 'package:movie_app/data/model/movie_list_model.dart';
+import 'package:movie_app/data/model/offline_bookmarked_movies.dart';
 
 class Storage {
   static final Storage _instance = Storage._internal();
